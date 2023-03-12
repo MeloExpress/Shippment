@@ -2,6 +2,7 @@ package com.example.MeloExpress.Shippment.domain;
 
 
 import com.example.MeloExpress.Shippment.dto.CollectCreateDTO;
+import com.example.MeloExpress.Shippment.dto.CollectRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -22,15 +23,30 @@ public class Collect {
 
     private String customerCode;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "collect_address_id")
+    private CollectAddress collectAddress;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
-    public Collect(CollectCreateDTO collectCreateDTO) {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+    public Collect(CollectCreateDTO collectCreateDTO, CollectAddress collectAddress) {
         this.customerCode = collectCreateDTO.customerCode();
-        this.startTime = LocalDateTime.parse(collectCreateDTO.startTime(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        this.endTime = LocalDateTime.parse(collectCreateDTO.endTime(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        this.collectAddress = collectAddress;
+        this.startTime = LocalDateTime.parse(collectCreateDTO.startTime(), formatter);
+        this.endTime = LocalDateTime.parse(collectCreateDTO.endTime(), formatter);
     }
 
-
+    public CollectRequestDTO toCollectRequestDTO() {
+        return new CollectRequestDTO(
+                collectId,
+                customerCode,
+                collectAddress.getCollectAddressId(),
+                startTime.format(formatter),
+                endTime.format(formatter)
+        );
+    }
 }

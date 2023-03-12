@@ -8,15 +8,17 @@ import java.time.format.DateTimeFormatter;
 public record CollectRequestDTO(
         Long collectId,
         String customerCode,
+        Long collectAddressId,
         String startTime,
         String endTime
 ) {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     public CollectRequestDTO(Collect collect) {
         this(
                 collect.getCollectId(),
                 collect.getCustomerCode(),
+                collect.getCollectAddress().getCollectAddressId(),
                 collect.getStartTime().format(formatter),
                 collect.getEndTime().format(formatter)
         );
