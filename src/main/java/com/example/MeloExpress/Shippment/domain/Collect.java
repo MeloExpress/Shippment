@@ -2,7 +2,7 @@ package com.example.MeloExpress.Shippment.domain;
 
 
 import com.example.MeloExpress.Shippment.dto.CollectCreateDTO;
-import com.example.MeloExpress.Shippment.dto.CollectRequestDTO;
+import com.example.MeloExpress.Shippment.dto.collectDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -40,8 +40,8 @@ public class Collect {
         this.endTime = LocalDateTime.parse(collectCreateDTO.endTime(), formatter);
     }
 
-    public CollectRequestDTO toCollectRequestDTO() {
-        return new CollectRequestDTO(
+    public collectDetailsDTO toCollectRequestDTO() {
+        return new collectDetailsDTO(
                 collectId,
                 customerCode,
                 collectAddress.getCollectAddressId(),

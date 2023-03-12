@@ -5,7 +5,7 @@ import com.example.MeloExpress.Shippment.domain.Collect;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public record CollectRequestDTO(
+public record collectDetailsDTO(
         Long collectId,
         String customerCode,
         Long collectAddressId,
@@ -14,7 +14,7 @@ public record CollectRequestDTO(
 ) {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-    public CollectRequestDTO(Collect collect) {
+    public collectDetailsDTO(Collect collect) {
         this(
                 collect.getCollectId(),
                 collect.getCustomerCode(),

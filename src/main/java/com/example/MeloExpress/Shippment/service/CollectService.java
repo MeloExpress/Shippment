@@ -4,16 +4,14 @@ package com.example.MeloExpress.Shippment.service;
 import com.example.MeloExpress.Shippment.domain.Collect;
 import com.example.MeloExpress.Shippment.domain.CollectAddress;
 import com.example.MeloExpress.Shippment.dto.CollectCreateDTO;
-import com.example.MeloExpress.Shippment.dto.CollectRequestDTO;
+import com.example.MeloExpress.Shippment.dto.collectDetailsDTO;
 import com.example.MeloExpress.Shippment.dto.CollectResponseDTO;
 import com.example.MeloExpress.Shippment.repository.CollectAddressRepository;
 import com.example.MeloExpress.Shippment.repository.CollectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.time.format.DateTimeFormatter;
 
 
@@ -38,7 +36,7 @@ public class CollectService {
         collect.setCollectAddress(savedCollectAddress);
         Collect savedCollect = collectRepository.save(collect);
 
-        CollectRequestDTO collectRequestDTO = savedCollect.toCollectRequestDTO();
+        collectDetailsDTO collectDetailsDTO = savedCollect.toCollectRequestDTO();
 
         CollectResponseDTO collectResponseDTO = new CollectResponseDTO(
                 savedCollect.getCollectId(),
