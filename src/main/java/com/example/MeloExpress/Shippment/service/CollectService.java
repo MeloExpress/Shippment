@@ -27,6 +27,8 @@ public class CollectService {
     @Autowired
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
+
+
     @Transactional
     public CollectResponseDTO createCollectAndAddress(CollectCreateDTO collectCreateDTO) {
         CollectAddress collectAddress = new CollectAddress();
