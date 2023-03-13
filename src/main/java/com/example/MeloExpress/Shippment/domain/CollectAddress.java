@@ -3,6 +3,8 @@ package com.example.MeloExpress.Shippment.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,10 @@ public class CollectAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long collectAddressId;
+    @Column(name = "address_code")
+    private UUID addressCode;
 
+    public CollectAddress(UUID addressCode) {
+        this.addressCode = addressCode;
+    }
 }

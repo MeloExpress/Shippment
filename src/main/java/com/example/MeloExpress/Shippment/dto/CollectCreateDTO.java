@@ -1,9 +1,11 @@
 package com.example.MeloExpress.Shippment.dto;
 
+import java.util.UUID;
+
 public record CollectCreateDTO (
-        String customerCode,
+        UUID customerCode,
         String collectAddressId,
+        UUID addressCode,
         String startTime,
         String endTime
-){
-}
+) {}

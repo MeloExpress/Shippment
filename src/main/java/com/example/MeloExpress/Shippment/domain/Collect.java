@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,7 +22,7 @@ public class Collect {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long collectId;
 
-    private String customerCode;
+    private UUID customerCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collect_address_id")

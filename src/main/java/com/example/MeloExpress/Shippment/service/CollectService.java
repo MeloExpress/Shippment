@@ -11,8 +11,8 @@ import com.example.MeloExpress.Shippment.repository.CollectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.format.DateTimeFormatter;
+
 
 
 @Service
@@ -32,9 +32,11 @@ public class CollectService {
     @Transactional
     public CollectResponseDTO createCollectAndAddress(CollectCreateDTO collectCreateDTO) {
         CollectAddress collectAddress = new CollectAddress();
+        collectAddress.setAddressCode(collectCreateDTO.addressCode());
         CollectAddress savedCollectAddress = collectAddressRepository.save(collectAddress);
 
         Collect collect = new Collect(collectCreateDTO, collectAddress);
+        collect.setCustomerCode(collectCreateDTO.customerCode());
         collect.setCollectAddress(savedCollectAddress);
         Collect savedCollect = collectRepository.save(collect);
 
@@ -42,8 +44,9 @@ public class CollectService {
 
         CollectResponseDTO collectResponseDTO = new CollectResponseDTO(
                 savedCollect.getCollectId(),
-                savedCollect.getCustomerCode(),
                 savedCollect.getCollectAddress().getCollectAddressId(),
+                savedCollect.getCustomerCode(),
+                savedCollect.getCollectAddress().getAddressCode(),
                 savedCollect.getStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 savedCollect.getEndTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         );

@@ -4,10 +4,11 @@ import com.example.MeloExpress.Shippment.domain.Collect;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 public record collectDetailsDTO(
         Long collectId,
-        String customerCode,
+        UUID customerCode,
         Long collectAddressId,
         String startTime,
         String endTime
