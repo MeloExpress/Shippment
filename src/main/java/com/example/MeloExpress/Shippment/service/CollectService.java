@@ -3,14 +3,16 @@ package com.example.MeloExpress.Shippment.service;
 
 import com.example.MeloExpress.Shippment.domain.Collect;
 import com.example.MeloExpress.Shippment.domain.CollectAddress;
-import com.example.MeloExpress.Shippment.dto.CollectCreateDTO;
-import com.example.MeloExpress.Shippment.dto.collectDetailsDTO;
-import com.example.MeloExpress.Shippment.dto.CollectResponseDTO;
+import com.example.MeloExpress.Shippment.dto.*;
 import com.example.MeloExpress.Shippment.repository.CollectAddressRepository;
 import com.example.MeloExpress.Shippment.repository.CollectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
 import java.time.format.DateTimeFormatter;
 
 
@@ -25,12 +27,31 @@ public class CollectService {
     private CollectAddressRepository collectAddressRepository;
 
     @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
 
 
     @Transactional
-    public CollectResponseDTO createCollectAndAddress(CollectCreateDTO collectCreateDTO) {
+    public CollectResponseWithCustomerDTO createCollectAndAddress(CollectCreateDTO collectCreateDTO) {
+        ResponseEntity<CustomerDetailsFindDTO> customerResponse = restTemplate.getForEntity(
+                "http://localhost:8080/customers/code/" + collectCreateDTO.customerCode(),
+                CustomerDetailsFindDTO.class);
+        if (customerResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new RuntimeException("Cliente não encontrado");
+        }
+        CustomerDetailsFindDTO customerDetails = customerResponse.getBody();
+
+        ResponseEntity<AddressDetailsFindDTO> addressResponse = restTemplate.getForEntity(
+                "http://localhost:8080/customers/" + customerDetails.customerId() + "/addresses/code/" + collectCreateDTO.addressCode(),
+                AddressDetailsFindDTO.class);
+        if (addressResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new RuntimeException("Endereço não encontrado");
+        }
+        AddressDetailsFindDTO addressDetails = addressResponse.getBody();
+
         CollectAddress collectAddress = new CollectAddress();
         collectAddress.setAddressCode(collectCreateDTO.addressCode());
         CollectAddress savedCollectAddress = collectAddressRepository.save(collectAddress);
@@ -42,13 +63,34 @@ public class CollectService {
 
         collectDetailsDTO collectDetailsDTO = savedCollect.toCollectRequestDTO();
 
-        CollectResponseDTO collectResponseDTO = new CollectResponseDTO(
+        CollectResponseWithCustomerDTO collectResponseDTO = new CollectResponseWithCustomerDTO(
                 savedCollect.getCollectId(),
                 savedCollect.getCollectAddress().getCollectAddressId(),
                 savedCollect.getCustomerCode(),
                 savedCollect.getCollectAddress().getAddressCode(),
                 savedCollect.getStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                savedCollect.getEndTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                savedCollect.getEndTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                new CustomerDetailsFindDTO(
+                        customerDetails.customerId(),
+                        customerDetails.customerCode(),
+                        customerDetails.companyName(),
+                        customerDetails.cnpj(),
+                        customerDetails.stateRegistration(),
+                        customerDetails.email(),
+                        customerDetails.phone(),
+                        customerDetails.responsible()),
+                new AddressDetailsFindDTO(
+                        addressDetails.addressId(),
+                        addressDetails.addressCode(),
+                        addressDetails.zipCode(),
+                        addressDetails.street(),
+                        addressDetails.number(),
+                        addressDetails.complements(),
+                        addressDetails.district(),
+                        addressDetails.city(),
+                        addressDetails.state(),
+                        addressDetails.pointReference()
+                        )
         );
 
         return collectResponseDTO;
