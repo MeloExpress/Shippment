@@ -9,7 +9,7 @@ public record CollectResponseWithCustomerDTO(
         UUID addressCode,
         String startTime,
         String endTime,
-        CustomerDetailsFindDTO customerDetails,
-        AddressDetailsFindDTO addressDetailsFindDTO
+        CustomerDetailsFindDTO customerData,
+        AddressDetailsFindDTO addressData
 ) {
 }

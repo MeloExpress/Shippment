@@ -63,7 +63,7 @@ public class CollectService {
 
         collectDetailsDTO collectDetailsDTO = savedCollect.toCollectRequestDTO();
 
-        CollectResponseWithCustomerDTO collectResponseDTO = new CollectResponseWithCustomerDTO(
+        return new CollectResponseWithCustomerDTO(
                 savedCollect.getCollectId(),
                 savedCollect.getCollectAddress().getCollectAddressId(),
                 savedCollect.getCustomerCode(),
@@ -73,27 +73,25 @@ public class CollectService {
                 new CustomerDetailsFindDTO(
                         customerDetails.customerId(),
                         customerDetails.customerCode(),
-                        customerDetails.companyName(),
+                        customerDetails.companyName().toUpperCase(),
                         customerDetails.cnpj(),
                         customerDetails.stateRegistration(),
                         customerDetails.email(),
                         customerDetails.phone(),
-                        customerDetails.responsible()),
+                        customerDetails.responsible().toUpperCase()),
                 new AddressDetailsFindDTO(
                         addressDetails.addressId(),
                         addressDetails.addressCode(),
                         addressDetails.zipCode(),
-                        addressDetails.street(),
+                        addressDetails.street().toUpperCase(),
                         addressDetails.number(),
-                        addressDetails.complements(),
-                        addressDetails.district(),
-                        addressDetails.city(),
-                        addressDetails.state(),
-                        addressDetails.pointReference()
+                        addressDetails.complements().toUpperCase(),
+                        addressDetails.district().toUpperCase(),
+                        addressDetails.city().toUpperCase(),
+                        addressDetails.state().toUpperCase(),
+                        addressDetails.pointReference().toUpperCase()
                         )
         );
-
-        return collectResponseDTO;
     }
 
 }
