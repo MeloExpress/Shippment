@@ -3,22 +3,28 @@ package com.example.MeloExpress.Shippment.service;
 
 import com.example.MeloExpress.Shippment.domain.Collect;
 import com.example.MeloExpress.Shippment.domain.CollectAddress;
+import com.example.MeloExpress.Shippment.domain.CollectEvents;
+import com.example.MeloExpress.Shippment.domain.CollectStates;
 import com.example.MeloExpress.Shippment.dto.*;
 import com.example.MeloExpress.Shippment.repository.CollectAddressRepository;
 import com.example.MeloExpress.Shippment.repository.CollectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.statemachine.service.StateMachineService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.format.DateTimeFormatter;
-
+import java.util.List;
 
 
 @Service
 public class CollectService {
+
+    @Autowired
+    private CollectStates collectStates;
 
     @Autowired
     private CollectRepository collectRepository;
@@ -29,8 +35,33 @@ public class CollectService {
     @Autowired
     private RestTemplate restTemplate;
 
+    private final CollectStateService stateMachineService;
+
     @Autowired
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+
+
+
+    public CollectService(RestTemplate restTemplate,
+                          CollectRepository collectRepository,
+                          CollectAddressRepository collectAddressRepository,
+                          CollectStateService collectStateService) {
+        this.restTemplate = restTemplate;
+        this.collectRepository = collectRepository;
+        this.collectAddressRepository = collectAddressRepository;
+        this.stateMachineService = collectStateService;
+    }
+
+    public List<Collect> findCollectsByStatus(CollectStates status) {
+        return collectRepository.findByCollectState(status);
+    }
+
+
+    @Transactional
+    public Collect save(Collect collect) {
+        return collectRepository.save(collect);
+    }
 
 
 
@@ -58,6 +89,7 @@ public class CollectService {
 
         Collect collect = new Collect(collectCreateDTO, collectAddress);
         collect.setCustomerCode(collectCreateDTO.customerCode());
+        collect.setCollectState(CollectStates.AGENDADA);
         collect.setCollectAddress(savedCollectAddress);
         Collect savedCollect = collectRepository.save(collect);
 
@@ -70,6 +102,7 @@ public class CollectService {
                 savedCollect.getCollectAddress().getAddressCode(),
                 savedCollect.getStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 savedCollect.getEndTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                savedCollect.getCollectState().toString(),
                 new CustomerDetailsFindDTO(
                         customerDetails.customerId(),
                         customerDetails.customerCode(),

@@ -1,6 +1,7 @@
 package com.example.MeloExpress.Shippment.dto;
 
 import com.example.MeloExpress.Shippment.domain.Collect;
+import com.example.MeloExpress.Shippment.domain.CollectStates;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +11,7 @@ public record collectDetailsDTO(
         Long collectId,
         UUID customerCode,
         Long collectAddressId,
+        CollectStates collectStates,
         String startTime,
         String endTime
 ) {
@@ -20,6 +22,7 @@ public record collectDetailsDTO(
                 collect.getCollectId(),
                 collect.getCustomerCode(),
                 collect.getCollectAddress().getCollectAddressId(),
+                collect.getCollectState(),
                 collect.getStartTime().format(formatter),
                 collect.getEndTime().format(formatter)
         );
