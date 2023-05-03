@@ -28,6 +28,9 @@ public class Collect {
     @JoinColumn(name = "collect_address_id")
     private CollectAddress collectAddress;
 
+    @Enumerated(EnumType.STRING)
+    private CollectStates collectState;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -37,6 +40,7 @@ public class Collect {
     public Collect(CollectCreateDTO collectCreateDTO, CollectAddress collectAddress) {
         this.customerCode = collectCreateDTO.customerCode();
         this.collectAddress = collectAddress;
+        this.collectState = CollectStates.AGENDADA;
         this.startTime = LocalDateTime.parse(collectCreateDTO.startTime(), formatter);
         this.endTime = LocalDateTime.parse(collectCreateDTO.endTime(), formatter);
     }
@@ -46,6 +50,7 @@ public class Collect {
                 collectId,
                 customerCode,
                 collectAddress.getCollectAddressId(),
+                collectState,
                 startTime.format(formatter),
                 endTime.format(formatter)
         );
