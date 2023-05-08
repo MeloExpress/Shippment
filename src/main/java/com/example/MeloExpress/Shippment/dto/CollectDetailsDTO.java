@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-public record collectDetailsDTO(
+public record CollectDetailsDTO(
         Long collectId,
         UUID customerCode,
         Long collectAddressId,
@@ -17,7 +17,7 @@ public record collectDetailsDTO(
 ) {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-    public collectDetailsDTO(Collect collect) {
+    public CollectDetailsDTO(Collect collect) {
         this(
                 collect.getCollectId(),
                 collect.getCustomerCode(),
