@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public record CollectResponseWithCustomerDTO(
         Long collectId,
+        UUID collectCode,
         Long collectAddressId,
         UUID customerCode,
         UUID addressCode,

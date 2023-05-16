@@ -28,4 +28,25 @@ public class CollectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(collectResponseDTO);
     }
 
+    @PostMapping("/collects/{id}/cancel")
+    public ResponseEntity<String> cancelCollect(@PathVariable("id") Long collectId) {
+        try {
+            collectService.cancelCollect(collectId);
+            return ResponseEntity.ok("Coleta cancelada com sucesso.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/collects/{id}/completed")
+    public ResponseEntity<String> okCollect(@PathVariable("id") Long collectId) {
+        try {
+            collectService.okCollect(collectId);
+            return ResponseEntity.ok("Coleta Realizada.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
 }

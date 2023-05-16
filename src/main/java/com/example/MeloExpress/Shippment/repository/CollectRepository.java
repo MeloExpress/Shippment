@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface CollectRepository extends JpaRepository <Collect, Long> {
 
-    List<Collect> findByCollectState(CollectStates state);
+    List<Collect> findByCollectState(CollectStates states);
 
 }

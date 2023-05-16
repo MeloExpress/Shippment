@@ -5,6 +5,7 @@ import java.util.UUID;
 public record CollectCreateDTO (
         UUID customerCode,
         String collectAddressId,
+        UUID collectCode,
         String collectState,
         UUID addressCode,
         String startTime,

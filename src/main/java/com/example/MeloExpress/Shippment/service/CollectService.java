@@ -3,7 +3,6 @@ package com.example.MeloExpress.Shippment.service;
 
 import com.example.MeloExpress.Shippment.domain.Collect;
 import com.example.MeloExpress.Shippment.domain.CollectAddress;
-import com.example.MeloExpress.Shippment.domain.CollectEvents;
 import com.example.MeloExpress.Shippment.domain.CollectStates;
 import com.example.MeloExpress.Shippment.dto.*;
 import com.example.MeloExpress.Shippment.repository.CollectAddressRepository;
@@ -11,13 +10,14 @@ import com.example.MeloExpress.Shippment.repository.CollectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.statemachine.service.StateMachineService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -88,15 +88,17 @@ public class CollectService {
         CollectAddress savedCollectAddress = collectAddressRepository.save(collectAddress);
 
         Collect collect = new Collect(collectCreateDTO, collectAddress);
+        collect.setCollectCode(UUID.randomUUID());
         collect.setCustomerCode(collectCreateDTO.customerCode());
         collect.setCollectState(CollectStates.AGENDADA);
         collect.setCollectAddress(savedCollectAddress);
         Collect savedCollect = collectRepository.save(collect);
 
-        collectDetailsDTO collectDetailsDTO = savedCollect.toCollectRequestDTO();
+        CollectDetailsDTO collectDetailsDTO = savedCollect.toCollectRequestDTO();
 
         return new CollectResponseWithCustomerDTO(
                 savedCollect.getCollectId(),
+                savedCollect.getCollectCode(),
                 savedCollect.getCollectAddress().getCollectAddressId(),
                 savedCollect.getCustomerCode(),
                 savedCollect.getCollectAddress().getAddressCode(),
@@ -125,6 +127,29 @@ public class CollectService {
                         addressDetails.pointReference().toUpperCase()
                         )
         );
+
+    }
+
+    @Transactional
+    public void cancelCollect(Long collectId) {
+        Optional<Collect> collectOptional = collectRepository.findById(collectId);
+        if (collectOptional.isEmpty()) {
+            throw new RuntimeException("Coleta não encontrada");
+        }
+        Collect collect = collectOptional.get();
+        collect.setCollectState(CollectStates.CANCELADA);
+        collectRepository.save(collect);
+    }
+
+    @Transactional
+    public void okCollect(Long collectId) {
+        Optional<Collect> collectOptional = collectRepository.findById(collectId);
+        if (collectOptional.isEmpty()) {
+            throw new RuntimeException("Coleta não encontrada");
+        }
+        Collect collect = collectOptional.get();
+        collect.setCollectState(CollectStates.REALIZADA);
+        collectRepository.save(collect);
     }
 
 }
