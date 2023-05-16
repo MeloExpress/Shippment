@@ -22,6 +22,8 @@ public class Collect {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long collectId;
 
+    private UUID collectCode;
+
     private UUID customerCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,6 +40,7 @@ public class Collect {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     public Collect(CollectCreateDTO collectCreateDTO, CollectAddress collectAddress) {
+        this.collectCode = collectCreateDTO.collectCode();
         this.customerCode = collectCreateDTO.customerCode();
         this.collectAddress = collectAddress;
         this.collectState = CollectStates.AGENDADA;
@@ -48,6 +51,7 @@ public class Collect {
     public CollectDetailsDTO toCollectRequestDTO() {
         return new CollectDetailsDTO(
                 collectId,
+                collectCode,
                 customerCode,
                 collectAddress.getCollectAddressId(),
                 collectState,

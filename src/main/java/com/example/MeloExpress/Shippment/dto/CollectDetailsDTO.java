@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public record CollectDetailsDTO(
         Long collectId,
+        UUID collectCode,
         UUID customerCode,
         Long collectAddressId,
         CollectStates collectStates,
@@ -20,6 +21,7 @@ public record CollectDetailsDTO(
     public CollectDetailsDTO(Collect collect) {
         this(
                 collect.getCollectId(),
+                collect.getCollectCode(),
                 collect.getCustomerCode(),
                 collect.getCollectAddress().getCollectAddressId(),
                 collect.getCollectState(),

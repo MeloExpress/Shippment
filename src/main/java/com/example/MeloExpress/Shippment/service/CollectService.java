@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -87,6 +88,7 @@ public class CollectService {
         CollectAddress savedCollectAddress = collectAddressRepository.save(collectAddress);
 
         Collect collect = new Collect(collectCreateDTO, collectAddress);
+        collect.setCollectCode(UUID.randomUUID());
         collect.setCustomerCode(collectCreateDTO.customerCode());
         collect.setCollectState(CollectStates.AGENDADA);
         collect.setCollectAddress(savedCollectAddress);
@@ -96,6 +98,7 @@ public class CollectService {
 
         return new CollectResponseWithCustomerDTO(
                 savedCollect.getCollectId(),
+                savedCollect.getCollectCode(),
                 savedCollect.getCollectAddress().getCollectAddressId(),
                 savedCollect.getCustomerCode(),
                 savedCollect.getCollectAddress().getAddressCode(),
