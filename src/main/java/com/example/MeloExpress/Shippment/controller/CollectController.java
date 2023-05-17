@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("collect")
@@ -27,6 +29,13 @@ public class CollectController {
         CollectResponseWithCustomerDTO collectResponseDTO = collectService.createCollectAndAddress(collectCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(collectResponseDTO);
     }
+
+    @GetMapping("/code/{collectCode}")
+    public ResponseEntity<CollectResponseWithCustomerDTO> findCollectByCode(@PathVariable UUID collectCode) {
+        CollectResponseWithCustomerDTO collectResponse = collectService.findCollectByCode(collectCode);
+        return ResponseEntity.ok(collectResponse);
+    }
+
 
     @PostMapping("/collects/{id}/cancel")
     public ResponseEntity<String> cancelCollect(@PathVariable("id") Long collectId) {

@@ -130,6 +130,60 @@ public class CollectService {
 
     }
 
+    @Transactional(readOnly = true)
+    public CollectResponseWithCustomerDTO findCollectByCode(UUID collectCode) {
+        Collect collect = (Collect) collectRepository.findByCollectCode(collectCode)
+                .orElseThrow(() -> new RuntimeException("Collect não encontrado"));
+        ResponseEntity<CustomerDetailsFindDTO> customerResponse = restTemplate.getForEntity(
+                "http://localhost:8080/customers/code/" + collect.getCustomerCode(),
+                CustomerDetailsFindDTO.class);
+        if (customerResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new RuntimeException("Cliente não encontrado");
+        }
+        CustomerDetailsFindDTO customerDetails = customerResponse.getBody();
+
+        ResponseEntity<AddressDetailsFindDTO> addressResponse = restTemplate.getForEntity(
+                "http://localhost:8080/customers/" + customerDetails.customerId() + "/addresses/code/" + collect.getCollectAddress().getAddressCode(),
+                AddressDetailsFindDTO.class);
+        if (addressResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new RuntimeException("Endereço não encontrado");
+        }
+        AddressDetailsFindDTO addressDetails = addressResponse.getBody();
+
+        return new CollectResponseWithCustomerDTO(
+                collect.getCollectId(),
+                collect.getCollectCode(),
+                collect.getCollectAddress().getCollectAddressId(),
+                collect.getCustomerCode(),
+                collect.getCollectAddress().getAddressCode(),
+                collect.getStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                collect.getEndTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                collect.getCollectState().toString(),
+                new CustomerDetailsFindDTO(
+                        customerDetails.customerId(),
+                        customerDetails.customerCode(),
+                        customerDetails.companyName().toUpperCase(),
+                        customerDetails.cnpj(),
+                        customerDetails.stateRegistration(),
+                        customerDetails.email(),
+                        customerDetails.phone(),
+                        customerDetails.responsible().toUpperCase()),
+                new AddressDetailsFindDTO(
+                        addressDetails.addressId(),
+                        addressDetails.addressCode(),
+                        addressDetails.zipCode(),
+                        addressDetails.street().toUpperCase(),
+                        addressDetails.number(),
+                        addressDetails.complements().toUpperCase(),
+                        addressDetails.district().toUpperCase(),
+                        addressDetails.city().toUpperCase(),
+                        addressDetails.state().toUpperCase(),
+                        addressDetails.pointReference().toUpperCase()
+                )
+        );
+    }
+
+
     @Transactional
     public void cancelCollect(Long collectId) {
         Optional<Collect> collectOptional = collectRepository.findById(collectId);
