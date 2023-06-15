@@ -206,6 +206,37 @@ public class CollectService {
         collectRepository.save(collect);
     }
 
+    @Transactional
+    public void routeCollect(UUID collectCode) {
+        Optional<Collect> collectOptional = collectRepository.findByCollectCode(collectCode);
+        if (collectOptional.isEmpty()) {
+            throw new RuntimeException("Coleta não encontrada");
+        }
+
+        Collect collect = collectOptional.get();
+        collect.setCollectState(CollectStates.ROTEIRIZADA);
+        collectRepository.save(collect);
+    }
+
+
+    @Transactional
+    public void updateCollectStatus(String collectCode) {
+        try {
+            UUID collectUUID = UUID.fromString(collectCode);
+            Optional<Collect> collectOptional = collectRepository.findByCollectCode(collectUUID);
+
+            if (collectOptional.isPresent()) {
+                Collect collect = collectOptional.get();
+                collect.setCollectState(CollectStates.ROTEIRIZADA);
+                collectRepository.save(collect);
+            } else {
+                throw new RuntimeException("Coleta não encontrada");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Código de coleta inválido");
+        }
+    }
+
 }
 
 

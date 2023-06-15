@@ -24,7 +24,7 @@ public class VerifyCollectStatesAtrasadasUseCase implements VerifyCollectStatesU
     @Override
     @Scheduled(fixedDelay = 60000) // Executa a cada 1 minuto
     public void execute() {
-        List<CollectStates> states = Arrays.asList(CollectStates.AGENDADA, CollectStates.ROTEIRIZADA);
+        List<CollectStates> states = List.of(CollectStates.AGENDADA);
         for (CollectStates state : states) {
             List<Collect> collectList = collectRepository.findByCollectState(state);
             LocalDateTime now = LocalDateTime.now();
