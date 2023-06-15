@@ -4,6 +4,7 @@ package com.example.MeloExpress.Shippment.controller;
 import com.example.MeloExpress.Shippment.dto.CollectCreateDTO;
 import com.example.MeloExpress.Shippment.dto.CollectResponseWithCustomerDTO;
 import com.example.MeloExpress.Shippment.service.CollectService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +56,12 @@ public class CollectController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @Transactional
+    @PostMapping("/{collectCode}/route")
+    public void routeCollectByCode(@PathVariable UUID collectCode) {
+        collectService.routeCollect(collectCode);
     }
 
 

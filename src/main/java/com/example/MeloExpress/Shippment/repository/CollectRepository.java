@@ -14,5 +14,5 @@ public interface CollectRepository extends JpaRepository <Collect, Long> {
 
     List<Collect> findByCollectState(CollectStates states);
 
-    Optional<Object> findByCollectCode(UUID collectCode);
+    Optional<Collect> findByCollectCode(UUID collectCode);
 }
